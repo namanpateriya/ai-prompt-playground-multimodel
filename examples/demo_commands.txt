@@ -1,3 +1,13 @@
-python -m app.cli --input "Explain AI"
+# CLI Execution
+python -m app.cli --input "Explain artificial intelligence"
 
+# API Execution
 uvicorn app.main:app --reload
+
+# Open Swagger UI
+http://127.0.0.1:8000/docs
+
+# Sample CURL
+curl -X POST "http://127.0.0.1:8000/run" \
+-H "Content-Type: application/json" \
+-d "{\"input\":\"Explain artificial intelligence\"}"
