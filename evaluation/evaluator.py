@@ -6,6 +6,13 @@ BASE = os.path.dirname(__file__)
 TEST_FILE = os.path.join(BASE, "test_cases.json")
 
 
+def has_error_block(block):
+    if not isinstance(block, dict):
+        return True
+
+    return any(str(val).lower().startswith("error") for val in block.values())
+
+
 def evaluate():
     with open(TEST_FILE) as f:
         cases = json.load(f)
@@ -16,9 +23,9 @@ def evaluate():
         output = run_prompt_playground(case["input"])
 
         variation_count = len(output.keys())
+
         has_error = any(
-            "error" in v.values() if isinstance(v, dict) else False
-            for v in output.values()
+            has_error_block(v) for v in output.values()
         )
 
         results.append({
@@ -35,13 +42,12 @@ def evaluate():
 
 def summarize(results):
     total = len(results)
-    avg_variations = sum(r["variation_count"] for r in results) / total
-
+    avg_variations = sum(r["variation_count"] for r in results) / total if total else 0
     errors = sum(1 for r in results if r["has_error"])
 
     print("\n=== SUMMARY ===")
     print(f"Total cases: {total}")
-    print(f"Average variations: {avg_variations}")
+    print(f"Average variations: {round(avg_variations,2)}")
     print(f"Cases with errors: {errors}")
 
 
